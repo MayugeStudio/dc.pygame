@@ -64,14 +64,16 @@ class Level(object):
     def draw(self, surf: pg.Surface) -> None:
         for tiles in self.inner:
             for tile in tiles:
-                if surf:
+                if tile:
                     surf.blit(tile.img, (tile.col * self.tile_size, tile.row * self.tile_size))
 
     def set_at(self, row: int, col: int, tile: Tile) -> None:
         self.inner[row][col] = tile
 
     def get_at(self, row: int, col: int) -> Tile:
-        return self.inner[row][col]
+        tile = self.inner[row][col]
+        assert tile is not None, "Exhaustive handling 'Level' class"
+        return tile
 
     @classmethod
     def generate(cls, rows: int, cols: int, tiles: list[pg.Surface], tile_size: int) -> Level:
@@ -134,7 +136,7 @@ def main() -> None:
     sc = pg.display.set_mode((SC_WIDTH, SC_HEIGHT))
     disp = pg.Surface((SC_WIDTH / RATIO, SC_HEIGHT / RATIO))
     is_killed = False
-    clock = pg.Clock()
+    clock = pg.time.Clock()
 
     # Initialize Game
     graphics = load_graphics(FILE_PATH_TILES)

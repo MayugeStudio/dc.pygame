@@ -15,8 +15,6 @@ FILE_PATH_TILES: list[str] = [
 
 FILE_PATH_PLAYER = "player.png"
 
-TILE_COUNT = len(FILE_PATH_TILES)
-
 SC_WIDTH = 1100
 SC_HEIGHT = 1000
 

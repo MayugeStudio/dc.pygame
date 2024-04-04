@@ -15,15 +15,19 @@ FILE_PATH_TILES: list[str] = [
 
 FILE_PATH_PLAYER = "player.png"
 
-SC_WIDTH = 1100
-SC_HEIGHT = 1000
+TOP_CANVAS_WIDTH = 750
+TOP_CANVAS_HEIGHT = 650
 
-SC_CANVAS_HEIGHT = 300
+BOTTOM_CANVAS_WIDTH = TOP_CANVAS_WIDTH
+BOTTOM_CANVAS_HEIGHT = 250
 
-RATIO = 10
+MAIN_SCREEN_WIDTH = TOP_CANVAS_WIDTH
+MAIN_SCREEN_HEIGHT = TOP_CANVAS_HEIGHT + BOTTOM_CANVAS_HEIGHT
 
-DISP_WIDTH = SC_WIDTH // RATIO
-DISP_HEIGHT = (SC_HEIGHT - SC_CANVAS_HEIGHT) // RATIO
+RATIO = 5
+
+DISP_WIDTH = TOP_CANVAS_WIDTH // RATIO
+DISP_HEIGHT = TOP_CANVAS_HEIGHT // RATIO
 
 TILE_SIZE = 10
 
@@ -133,8 +137,12 @@ def load_graphics(src: list[str]) -> list[pg.Surface]:
 def main() -> None:
     pg.init()
     random.seed(69)
-    sc = pg.display.set_mode((SC_WIDTH, SC_HEIGHT))
-    disp = pg.Surface((SC_WIDTH / RATIO, SC_HEIGHT / RATIO))
+
+    screen = pg.display.set_mode((MAIN_SCREEN_WIDTH, MAIN_SCREEN_HEIGHT))
+    top_canvas = pg.Surface((MAIN_SCREEN_WIDTH, TOP_CANVAS_HEIGHT))
+    bottom_canvas = pg.Surface((MAIN_SCREEN_WIDTH, BOTTOM_CANVAS_HEIGHT))
+    raw_canvas = pg.Surface((MAIN_SCREEN_WIDTH / RATIO, TOP_CANVAS_HEIGHT / RATIO))
+
     is_killed = False
     clock = pg.time.Clock()
 
@@ -175,12 +183,17 @@ def main() -> None:
 
         clock.tick(30)
 
-        level.draw(disp)
+        level.draw(raw_canvas)
 
-        disp.blit(p.img, (p.col * TILE_SIZE, p.row * TILE_SIZE))
+        raw_canvas.blit(p.img, (p.col * TILE_SIZE, p.row * TILE_SIZE))
 
-        scaled_disp = pg.transform.scale(disp, (SC_WIDTH, SC_HEIGHT))
-        sc.blit(scaled_disp, (0, 0))
+        scaled_disp = pg.transform.scale(raw_canvas, (TOP_CANVAS_WIDTH, TOP_CANVAS_HEIGHT))
+        top_canvas.blit(scaled_disp, (0, 0))
+
+        pg.draw.rect(bottom_canvas, (255, 255, 255), (0, 0, BOTTOM_CANVAS_WIDTH, BOTTOM_CANVAS_HEIGHT), width=5)
+
+        screen.blit(top_canvas, (0, 0))
+        screen.blit(bottom_canvas, (0, TOP_CANVAS_HEIGHT))
         pg.display.update()
 
     pg.quit()
